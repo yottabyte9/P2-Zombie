@@ -70,3 +70,44 @@ main(){
         cout << nround << " " << rand_num << " " << named_num << "\n";
     }
 }
+
+
+ordered_map<int, int> median;
+int mapsize = 0;
+if(destroyed){
+    median[current_round - zombie.round_created] ++;
+    mapsize ++;
+}
+if(round end){
+    int counter = 0;
+    bool flag = false;
+    int prev_store;
+
+    if(mapsize == 0){
+        return;
+    }
+
+    if(mapsize == 1){
+        for(auto i: median){
+            return i.first;
+        }
+    }
+
+    for(auto i: median){
+        
+        if(flag){
+            return (prev_store + i.first)/ 2;
+            break;
+        }
+        if(counter < mapsize/2 && counter + i.second > mapsize/2){ 
+            return i.first;
+        }
+        else if(counter + i.second == mapsize/2){ 
+            prev_store = i.first;
+            flag = true;
+        }
+        else{
+            counter += i.second;
+        }
+    }
+}
