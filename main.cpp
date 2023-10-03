@@ -57,5 +57,16 @@ void shoot(Zombie &zombie, int current_quiver){
 }
 
 main(){
-    
+    ios_base::sync_with_stdio(false);
+    if(nround == 0){ // read header data
+        string junk;
+        getline(cin, junk);
+        cin >> junk >> quiver >> junk >> rand_seed >> junk >> rand_distance >> junk >> rand_speed >> junk >> rand_health;
+        nround ++;
+    }
+    else{
+        string junk;
+        cin >> junk >> nround >> junk >> rand_num >> junk >> named_num;
+        cout << nround << " " << rand_num << " " << named_num << "\n";
+    }
 }
