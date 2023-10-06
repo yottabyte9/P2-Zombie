@@ -56,19 +56,47 @@ void shoot(Zombie &zombie, int current_quiver){
     }
 }
 
+
+void fill_initial(){
+    string junk;
+    string line;
+    
+    if(cin.peek() == '#'){
+        while(cin.peek() != '\n'){
+            cin >> line;
+        }
+    }
+    cin >> line;
+    while(line != "---"){
+        cout << line << "\n";
+        cin >> line;
+    }
+} 
+
+void fill_round(){
+    string line;
+    
+    cin >> line;
+    while(line != "---"){
+        if(line[0] == '\n'){
+            cout << "\n";
+        }
+        if(isdigit(line[0])){
+            cout << line << " ";
+            cin >> line;
+        }
+        else{
+            cin >> line;
+        }
+    }
+}
+
+
 main(){
     ios_base::sync_with_stdio(false);
-    if(nround == 0){ // read header data
-        string junk;
-        getline(cin, junk);
-        cin >> junk >> quiver >> junk >> rand_seed >> junk >> rand_distance >> junk >> rand_speed >> junk >> rand_health;
-        nround ++;
-    }
-    else{
-        string junk;
-        cin >> junk >> nround >> junk >> rand_num >> junk >> named_num;
-        cout << nround << " " << rand_num << " " << named_num << "\n";
-    }
+    cl(argc, argv);
+    fill_initial();
+    fill_round();
 }
 
 
