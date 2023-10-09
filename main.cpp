@@ -101,8 +101,8 @@ deque<Zombie*> dead;
 priority_queue<Zombie*, vector<Zombie*>, Comparator_s1> most_active; 
 priority_queue<Zombie*, vector<Zombie*>, Comparator_s2> least_active; 
 
-priority_queue<size_t, vector<size_t>, less<size_t>> m1; //largest first 
-priority_queue<size_t, vector<size_t>, greater<size_t>> m2; //smallest first
+priority_queue<size_t, vector<size_t>, greater<size_t>> m1;
+priority_queue<size_t, vector<size_t>, less<size_t>> m2;
 
 
 int eta(const Zombie* zombie){
@@ -122,12 +122,12 @@ int shoot(Zombie *zombie, uint32_t current_quiver){
         if(v){
             cout << "Destroyed: " << zombie->name << " (distance: " << zombie->distance << ", speed: " << zombie->speed << ", health: "<< zombie->health << ")\n";
         }
-        /* if(m){
-            uint32_t lifetime = uint32_t(nround) - zombie->round;
-            if(lifetime > m1.top()){
+        if(m){
+            uint32_t lifetime = uint32_t(nround) - zombie->round +1;
+            if(m1.empty() || lifetime > m1.top()){
                 m1.push(lifetime);
             }
-            else if(lifetime < m2.top()){
+            else if(m2.empty() || lifetime < m2.top()){
                 m2.push(lifetime);
             }
             else{
@@ -138,30 +138,31 @@ int shoot(Zombie *zombie, uint32_t current_quiver){
                     m1.push(lifetime);
                 }
             }
-            if(m1.size()-1 > m2.size()){
+
+            if(m1.size()-m2.size()>1 && !m1.empty()){
                 m2.push(m1.top());
                 m1.pop();
             }
-            else if(m2.size()-1 > m1.size()){
+            else if(m2.size()- m1.size() > 1 && !m2.empty()){
                 m1.push(m2.top());
                 m2.pop();
             }
-        } */
+        }
         dead.push_back(zombie);
         pq.pop();
     }
     return current_quiver;
 }
 
-/* double median_output(){
+double median_output(){
     if(m2.size() > m1.size()){
         return int(m2.top());
     }
     else if(m1.size() > m2.size()){
         return int(m1.top());
     }
-    return int(m1.top()+m2.top())/2.0;
-} */
+    return int(m1.top()+m2.top() + 1)/2;
+}
 
 void round(){
     int current_quiver = quiver;
@@ -174,11 +175,11 @@ void round(){
     if(pq.empty()){
         victory = true;
     }
-    /* if(m){
+    if(m){
         double temp = 0;
         temp = median_output();
         cout << "At the end of round " << nround << ", the median zombie lifetime is "<< temp << "\n";
-    } */
+    }
 }
 
 void move_forward(){ 
