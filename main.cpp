@@ -139,11 +139,11 @@ int shoot(Zombie *zombie, uint32_t current_quiver){
                 }
             }
 
-            if(m1.size()-m2.size()>1 && !m1.empty()){
+            while(m1.size()>m2.size()+1 && !m1.empty()){
                 m2.push(m1.top());
                 m1.pop();
             }
-            else if(m2.size()- m1.size() > 1 && !m2.empty()){
+            while(m2.size()>m1.size()+1 && !m2.empty()){
                 m1.push(m2.top());
                 m2.pop();
             }
@@ -172,13 +172,14 @@ void round(){
         }
         current_quiver = shoot(pq.top(), current_quiver);
     }
-    if(pq.empty()){
+    if(pq.empty() && file_end){
         victory = true;
     }
     if(m){
         double temp = 0;
         temp = median_output();
         cout << "At the end of round " << nround << ", the median zombie lifetime is "<< temp << "\n";
+        //cout << nround << ": " << m1.size() << " " << m2.size() << "\n";
     }
 }
 
@@ -291,13 +292,22 @@ int fill_round(){
 
     cin >> line;
     if(empty(line)){
+        if(pq.empty()){
+            victory = true;
+            return 0;
+        }
         nround ++;
         file_end = true;
         return 0;
     }
     cin >> line; //round
     cin >> line;
-
+    if(nround == 0 && stoi(line)>1){
+        while(nround < stoi(line)-1){
+            nround++;
+            if(v) cout << "Round: " << nround+1 << "\n";
+        }
+    }
     if(stoi(line) > nround+1){
         while(keep_going && stoi(line) > nround+1){
             nround++;
@@ -347,18 +357,20 @@ void end_sequence(){
     if(s){
         cout << "Zombies still active: " << master.size() - dead.size() << "\n";
         cout << "First zombies killed:\n";
-        for(uint32_t i=0; i<num; i++){
+        int dead_num = min(int(dead.size()), int(num));
+        for(int i=0; i<dead_num; i++){
             cout << dead[i]->name << " " << i+1 << "\n"; 
         }
         cout << "Last zombies killed:\n";
-        for(uint32_t i=0; i<num; i++){
-            cout << dead[dead.size()-i-1]->name << " " << num-i << "\n"; 
+        for(int i=0; i<dead_num; i++){
+            cout << dead[dead.size()-i-1]->name << " " << dead_num-i << "\n"; 
         }
-        cout << "Most active zombies:\n";
+        cout << "Most active zombies:\n"; //these two does not depend on dead, has to not be dead.size();
         for(uint32_t i=0; i<master.size(); i++){
             most_active.push(master[i]);
         }
-        for(uint32_t i=0; i<num; i++){
+        int ma = min(int(num), int(most_active.size()));
+        for(int i=0; i<ma; i++){
             cout << most_active.top()->name;
             if(most_active.top()->health > 0){
                 cout << " " <<  most_active.top()->active << "\n";
@@ -372,7 +384,8 @@ void end_sequence(){
         for(uint32_t i=0; i<master.size(); i++){
             least_active.push(master[i]);
         }
-        for(uint32_t i=0; i<num; i++){
+        int la = min(int(num), int(least_active.size()));
+        for(int i=0; i<la; i++){
             cout << least_active.top()->name;
             if(least_active.top()->health > 0){
                 cout << " " <<  least_active.top()->active << "\n";
@@ -395,7 +408,7 @@ int main(int argc, char **argv){
         if(!keep_going){
             end_sequence();
             victory = false;
-            return 0;
+            break;
         }
         if(file_end){
             nround ++;
@@ -410,7 +423,8 @@ int main(int argc, char **argv){
         cout << "VICTORY IN ROUND " << nround << "! " << last_name << " was the last zombie.\n";
         end_sequence();
     }
-    for (size_t i = 0; i < master.size(); i++) {
-        delete master[i];
+    while(!master.empty()){
+        delete master.front();
+        master.pop_front();
     }
 };
